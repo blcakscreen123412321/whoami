@@ -95,7 +95,7 @@
   <!-- Q3 -->
   <div class="screen" id="screen3">
     <div class="step">3 / 3</div>
-    <div class="question">내 이름을 맞추시오.</div>
+    <div class="question">제가 부계라고 의심되시나요?<br>누구의 부계 같으신가요?<br>의심하는 사람의 이름을 넣어주세요.</div>
     <input type="text" id="q3" placeholder="이름 입력" onkeydown="if(event.key==='Enter') finish()">
     <button onclick="finish()">제출</button>
   </div>
@@ -126,8 +126,9 @@
       if (!input.value.trim()) { input.focus(); return; }
       answers[3] = normalize(input.value);
 
-      // Q1 채점 (바람, 돌, 여자 순서무관)
-      const q1ok = ['바람','돌','여자'].every(a => answers[1].includes(a));
+      // Q1 채점 (바람, 돌, 여자 순서무관, 쉼표무관)
+      const q1clean = answers[1].replace(/,/g, '');
+      const q1ok = ['바람','돌','여자'].every(a => q1clean.includes(a));
       // Q2 채점
       const q2ok = answers[2] === '82';
       // Q3 채점
@@ -139,10 +140,10 @@
 
       if (q1ok && q2ok && q3ok) {
         result.className = 'success';
-        result.textContent = '축하합니다. 어떻게 맞추셨죠?';
+        result.textContent = '축하합니다. 제 본계정은 아보카도아포가토가 맞습니다.';
       } else {
         result.className = 'fail';
-        result.textContent = '누구~게';
+        result.textContent = 'ㅋㅋ누구~게';
       }
     }
   </script>
