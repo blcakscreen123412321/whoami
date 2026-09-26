@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>수수께끼</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      width: 100%; height: 100%;
+      background: #000;
+      font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
+    }
+    .screen {
+      display: none;
+      width: 100%;
+      height: 100vh;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      padding: 40px 24px;
+      color: #fff;
+      text-align: center;
+    }
+    .screen.active { display: flex; }
+
+    .step {
+      font-size: 0.8rem;
+      color: #555;
+      letter-spacing: 0.1em;
+      margin-bottom: 24px;
+    }
+    .question {
+      font-size: 1.2rem;
+      line-height: 1.7;
+      margin-bottom: 32px;
+      max-width: 480px;
+    }
+    input {
+      width: 100%;
+      max-width: 360px;
+      background: #111;
+      border: 1px solid #333;
+      border-radius: 6px;
+      padding: 12px 16px;
+      color: #fff;
+      font-size: 1rem;
+      font-family: inherit;
+      outline: none;
+      text-align: center;
+      transition: border-color 0.2s;
+      margin-bottom: 16px;
+    }
+    input:focus { border-color: #fff; }
+    button {
+      width: 160px;
+      padding: 12px;
+      background: #fff;
+      color: #000;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover { background: #ccc; }
+    #result-text {
+      font-size: 1.5rem;
+      line-height: 1.8;
+    }
+    #result-text.success { color: #4ade80; }
+    #result-text.fail { color: #f87171; }
+  </style>
+</head>
+<body>
+
+  <!-- Q1 -->
+  <div class="screen active" id="screen1">
+    <div class="step">1 / 3</div>
+    <div class="question">제주도는 삼다도라고도 불린다.<br>이때 삼다에 해당하는 세 가지를 말하시오.</div>
+    <input type="text" id="q1" placeholder="쉼표로 구분해서 입력" onkeydown="if(event.key==='Enter') next(1)">
+    <button onclick="next(1)">다음</button>
+  </div>
+
+  <!-- Q2 -->
+  <div class="screen" id="screen2">
+    <div class="step">2 / 3</div>
+    <div class="question">대한민국의 국가번호는 몇 번인가?</div>
+    <input type="text" id="q2" placeholder="숫자로 입력" onkeydown="if(event.key==='Enter') next(2)">
+    <button onclick="next(2)">다음</button>
+  </div>
+
+  <!-- Q3 -->
+  <div class="screen" id="screen3">
+    <div class="step">3 / 3</div>
+    <div class="question">내 이름을 맞추시오.</div>
+    <input type="text" id="q3" placeholder="이름 입력" onkeydown="if(event.key==='Enter') finish()">
+    <button onclick="finish()">제출</button>
+  </div>
+
+  <!-- 결과 -->
+  <div class="screen" id="screen4">
+    <div id="result-text"></div>
+  </div>
+
+  <script>
+    const answers = [];
+
+    function normalize(str) {
+      return str.replace(/\s/g, '').toLowerCase();
+    }
+
+    function next(step) {
+      const input = document.getElementById('q' + step);
+      if (!input.value.trim()) { input.focus(); return; }
+      answers[step] = normalize(input.value);
+      document.getElementById('screen' + step).classList.remove('active');
+      document.getElementById('screen' + (step + 1)).classList.add('active');
+      document.getElementById('q' + (step + 1)) && document.getElementById('q' + (step + 1)).focus();
+    }
+
+    function finish() {
+      const input = document.getElementById('q3');
+      if (!input.value.trim()) { input.focus(); return; }
+      answers[3] = normalize(input.value);
+
+      // Q1 채점 (바람, 돌, 여자 순서무관)
+      const q1ok = ['바람','돌','여자'].every(a => answers[1].includes(a));
+      // Q2 채점
+      const q2ok = answers[2] === '82';
+      // Q3 채점
+      const q3ok = answers[3] === '아보카도아포가토';
+
+      document.getElementById('screen3').classList.remove('active');
+      const result = document.getElementById('result-text');
+      document.getElementById('screen4').classList.add('active');
+
+      if (q1ok && q2ok && q3ok) {
+        result.className = 'success';
+        result.textContent = '축하합니다. 어떻게 맞추셨죠?';
+      } else {
+        result.className = 'fail';
+        result.textContent = '누구~게';
+      }
+    }
+  </script>
+</body>
+</html>
